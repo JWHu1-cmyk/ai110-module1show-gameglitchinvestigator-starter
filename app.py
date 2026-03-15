@@ -34,10 +34,11 @@ def check_guess(guess, secret):
         return "Win", "🎉 Correct!"
 
     try:
+        # FIX 1: Swapped hint messages — "Too High" was saying "Go HIGHER" and vice versa. Identified with Claude Code in agent mode.
         if guess > secret:
-            return "Too High", "📈 Go HIGHER!"
+            return "Too High", "📉 Go LOWER!"
         else:
-            return "Too Low", "📉 Go LOWER!"
+            return "Too Low", "📈 Go HIGHER!"
     except TypeError:
         g = str(guess)
         if g == secret:
@@ -93,7 +94,7 @@ if "secret" not in st.session_state:
     st.session_state.secret = random.randint(low, high)
 
 if "attempts" not in st.session_state:
-    st.session_state.attempts = 1
+    st.session_state.attempts = 0
 
 if "score" not in st.session_state:
     st.session_state.score = 0
@@ -155,6 +156,7 @@ if submit:
     else:
         st.session_state.history.append(guess_int)
 
+        # FIX 4: Removed conditional that converted secret to str on even attempts, causing type mismatch. Identified with Claude Code in agent mode.
         secret = st.session_state.secret
 
         outcome, message = check_guess(guess_int, secret)
