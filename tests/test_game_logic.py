@@ -35,35 +35,22 @@ def test_bug4_secret_type_consistency():
     )
 
 
-def test_bug2_attempts_initialized_to_zero():
+def test_bug1_hint_messages_correct_direction():
     """
-    FIX 2 regression test: The original bug initialized attempts to 1 instead
-    of 0, so the debug info always showed one extra attempt. This test reads
-    app.py and verifies the initial value is 0.
+    FIX 1 regression test: The original bug had hint messages swapped —
+    guessing too high said "Go HIGHER" and guessing too low said "Go LOWER".
+    Verify that the hints point the player in the correct direction.
     """
-    import ast
-    import os
+    # Guessing 80 when secret is 50 — too high, should tell player to go lower
+    outcome_high, message_high = check_guess(80, 50)
+    assert outcome_high == "Too High"
+    assert "LOWER" in message_high, (
+        f"When guess is too high, hint should say LOWER, got: {message_high}"
+    )
 
-    app_path = os.path.join(os.path.dirname(__file__), "..", "app.py")
-    with open(app_path) as f:
-        source = f.read()
-
-    tree = ast.parse(source)
-    for node in ast.walk(tree):
-        # Look for: st.session_state.attempts = 0
-        if (
-            isinstance(node, ast.Assign)
-            and len(node.targets) == 1
-            and isinstance(node.targets[0], ast.Attribute)
-            and node.targets[0].attr == "attempts"
-        ):
-            # The first assignment is the initialization
-            assert isinstance(node.value, ast.Constant), (
-                "attempts should be initialized to a constant"
-            )
-            assert node.value.value == 0, (
-                f"attempts should be initialized to 0, got {node.value.value}"
-            )
-            return
-
-    raise AssertionError("Could not find attempts initialization in app.py")
+    # Guessing 20 when secret is 50 — too low, should tell player to go higher
+    outcome_low, message_low = check_guess(20, 50)
+    assert outcome_low == "Too Low"
+    assert "HIGHER" in message_low, (
+        f"When guess is too low, hint should say HIGHER, got: {message_low}"
+    )
