@@ -8,19 +8,18 @@ Answer each question in 3 to 5 sentences. Be specific and honest about what actu
 - List at least three concrete bugs you noticed at the start  
   (for example: "the secret number kept changing" or "the hints were backwards").
 
-'''
-# 1
+1
 I kept seeing the message `📈 Go HIGHER!`
 even though I am inputting number larger then 100.
 
 I kept seeing the message '📉 Go LOWER!'
 even though I am inputting number smaller then 0.
 
-# 2
+2
 I have made 5 attempts.
 but the Developer Debug Info console says I have made 6 Attempts.
 
-# 3
+3
 Easy:
 Range: 1 to 20
 Attempts allowed: 6
@@ -32,14 +31,14 @@ Range: 1 to 50
 Attempts allowed: 5
 // the `Range`, `Attempts allowed` attributes seem to have been assigned to diffculty level arbitrarily.
 
-# 4
+4
 // fixed
 once you enter the first letter.
 the program would reject the first letter.
 but once you enter a subsequent letter.
 the program would accept the first letter.
 that's not suppose to happen could you search the repo and find out what logic is broken thanks.
-'''
+
 
 ---
 
@@ -49,13 +48,11 @@ that's not suppose to happen could you search the repo and find out what logic i
 - Give one example of an AI suggestion that was correct (including what the AI suggested and how you verified the result).
 - Give one example of an AI suggestion that was incorrect or misleading (including what the AI suggested and how you verified the result).
 
-'''
 - I used Claude Code.
 
 - For Bug #4, I described to Claude Code (in agent mode) that the first guess was being rejected but subsequent guesses were accepted. Claude suggested the issue was in the `secret` variable assignment around line 158 of `app.py`, where an `attempts % 2 == 0` conditional was converting `secret` to a string on even attempts but leaving it as an int on odd attempts — causing a type mismatch in `check_guess`. I verified this was correct by reading the original code and confirming the flip-flopping behavior, then removing the conditional so `secret` is always used directly from `session_state`. After the fix, every guess was evaluated consistently regardless of attempt number.
 
 - For Bug #1, I told Claude Code that I kept seeing "Go HIGHER" even when guessing above 100 and "Go LOWER" when guessing below 0. Claude correctly identified that the hint messages in `check_guess` were swapped — when `guess > secret` the code returned "Go HIGHER" instead of "Go LOWER" and vice versa. However, Claude's initial description was slightly misleading because it framed it as the "emojis and text are backwards," which made it sound like the emojis were wrong too. In reality, the emojis were already paired with the correct direction (📈 with HIGHER, 📉 with LOWER) — the real issue was just that the wrong message was returned for each branch. I verified the fix by running the app and confirming that guessing above the secret now says "Go LOWER" and guessing below says "Go HIGHER."
-'''
 
 ---
 
@@ -66,13 +63,11 @@ that's not suppose to happen could you search the repo and find out what logic i
   and what it showed you about your code.
 - Did AI help you design or understand any tests? How?
 
-'''
 - I decided a bug was fixed by first manually testing the app in Streamlit — for Bug #4, I made multiple guesses in a row and confirmed that every guess was evaluated correctly on the first attempt, not just on alternating ones. I also checked the git diff to make sure my change only removed the broken conditional and didn't introduce anything new.
 
 - I had Claude Code generate a pytest case in `tests/test_game_logic.py` called `test_bug4_secret_type_consistency`. The test calls `check_guess(50, 50)` (int secret) and `check_guess(50, "50")` (str secret) and asserts both return `"Win"`. This showed me that `check_guess` can handle both types, but the real fix was ensuring the caller never passes a string in the first place.
 
 - Yes, Claude Code wrote the test for me after I asked it to target the specific bug. It helped me understand that the core issue was a type mismatch between `int` and `str`, and the test was designed to catch that exact scenario if the bug ever gets reintroduced.
-'''
 
 ---
 
