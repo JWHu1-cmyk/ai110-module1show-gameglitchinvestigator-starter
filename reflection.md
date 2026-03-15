@@ -75,6 +75,10 @@ that's not suppose to happen could you search the repo and find out what logic i
 
 - How would you explain Streamlit "reruns" and session state to a friend who has never used Streamlit?
 
+```
+- Every time you interact with a Streamlit app — clicking a button, typing in a text box — the entire Python script reruns from top to bottom. That means any regular variable you define gets reset to its initial value on every interaction. To keep data around between reruns (like a secret number or an attempt counter), you have to store it in `st.session_state`, which is a dictionary that persists across reruns for the duration of the user's session. Think of it like a save file for your app: without it, the app has amnesia every time you click something.
+```
+
 ---
 
 ## 5. Looking ahead: your developer habits
@@ -83,3 +87,11 @@ that's not suppose to happen could you search the repo and find out what logic i
   - This could be a testing habit, a prompting strategy, or a way you used Git.
 - What is one thing you would do differently next time you work with AI on a coding task?
 - In one or two sentences, describe how this project changed the way you think about AI generated code.
+
+```
+- One habit I want to keep is describing the exact symptoms of a bug to the AI rather than guessing at the cause myself. When I told Claude Code what I was seeing ("the first guess gets rejected but the second one works"), it pinpointed the root cause faster than I would have by reading the code alone. Pairing that with checking the git diff after each fix helped me stay confident that only the intended change was made.
+
+- Next time, I would double-check the AI's explanation more carefully before accepting it. For Bug #1, Claude's description was slightly misleading about the emojis being wrong when really it was just the message mapping. Going forward, I want to read the actual code diff myself instead of relying solely on the AI's summary of what changed.
+
+- This project showed me that AI-generated code can look perfectly reasonable at first glance but still contain subtle logic bugs — like swapped messages or off-by-one errors — that only surface when you actually run the app. It reinforced that AI is a powerful drafting tool, but you still need to test and verify everything it produces.
+```
